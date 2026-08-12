@@ -6,9 +6,9 @@
   },
   "plugins": [
     {
-      "name": "writing-commit-messages",
-      "description": "Enforce clear commit messages: imperative mood, 50-char subject, business language, ticket prefix from branch",
-      "source": "./plugins/writing-commit-messages"
+      "name": "aitools",
+      "description": "Shared developer workflow plugins — commit conventions, code explanation, and more",
+      "source": "./plugins/aitools"
     }
   ]
 }

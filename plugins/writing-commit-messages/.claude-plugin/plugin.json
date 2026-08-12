@@ -1,5 +1,0 @@
-{
-  "name": "writing-commit-messages",
-  "version": "1.1.0",
-  "description": "Enforce clear commit messages: imperative mood, 50-char subject, business language, ticket prefix from branch"
-}
