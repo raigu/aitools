@@ -1,0 +1,14 @@
+{
+  "name": "aitools-marketplace",
+  "description": "Shared Claude Code plugins for commit conventions, issue workflows, and developer tooling",
+  "owner": {
+    "name": "Rait Kapp"
+  },
+  "plugins": [
+    {
+      "name": "writing-commit-messages",
+      "description": "Enforce clear commit messages: imperative mood, 50-char subject, business language, GitLab issue prefix",
+      "source": "./plugins/writing-commit-messages"
+    }
+  ]
+}
