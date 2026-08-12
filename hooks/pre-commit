@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# Guard: reject commits containing project-specific references.
+# Tools in this repo must be project-agnostic.
+
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+NC='\033[0m'
+
+# Patterns that indicate project-specific content.
+# Keep patterns generic — never put client names, project names, or
+# identifying info in this file. It is committed to a public repo.
+#
+# Maintainer: add client/project patterns to ~/.config/aitools/blocklist
+# (one grep -E pattern per line). That file is local-only and never committed.
+CHECKS=(
+  '/home/[a-z]+|~/\.(claude|config)/|Hardcoded home directory path'
+  'GitLab|glab |glab\b|GitLab-specific reference (use generic "issue tracker" or "ticket")'
+)
+
+# Load local blocklist (client names, project identifiers, emails, etc.)
+LOCAL_BLOCKLIST="${HOME}/.config/aitools/blocklist"
+if [[ -f "$LOCAL_BLOCKLIST" ]]; then
+  while IFS= read -r line; do
+    [[ -z "$line" || "$line" == \#* ]] && continue
+    CHECKS+=("${line}")
+  done < "$LOCAL_BLOCKLIST"
+fi
+
+violations=0
+tmpfile=$(mktemp)
+trap 'rm -f "$tmpfile"' EXIT
+
+# Get staged file content (only added/modified text files, skip hooks/ itself)
+staged_files=$(git diff --cached --name-only --diff-filter=ACM -- \
+  ':!hooks/' ':!.gitignore' ':!LICENSE') || true
+
+if [[ -z "$staged_files" ]]; then
+  exit 0
+fi
+
+for check in "${CHECKS[@]}"; do
+  pattern="${check%|*}"
+  label="${check##*|}"
+
+  # Search staged content (not working tree) for the pattern
+  while IFS= read -r file; do
+    matches=$(git show ":$file" 2>/dev/null | grep -inE "$pattern" || true)
+    if [[ -n "$matches" ]]; then
+      while IFS= read -r match; do
+        echo -e "${RED}BLOCKED${NC} [$file] ${YELLOW}${label}${NC}"
+        echo "  $match"
+      done <<< "$matches"
+      echo "$file" >> "$tmpfile"
+    fi
+  done <<< "$staged_files"
+done
+
+violations=$(sort -u "$tmpfile" 2>/dev/null | wc -l)
+
+if [[ "$violations" -gt 0 ]]; then
+  echo ""
+  echo -e "${RED}Commit rejected:${NC} $violations file(s) contain project-specific references."
+  echo "Tools in this repo must be project-agnostic."
+  echo ""
+  echo "If this is a false positive, commit with --no-verify."
+  exit 1
+fi
+
+exit 0
