@@ -66,3 +66,4 @@ If the branch name starts with a ticket number, prefix the subject with it.
 - Body explains implementation details instead of reasoning
 - Contains variable, class, or function names (unless purely technical change)
 - Any AI-generated references (no "Generated with...", no "Co-Authored-By: Claude", etc.)
+# test

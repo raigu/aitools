@@ -36,12 +36,37 @@ violations=0
 tmpfile=$(mktemp)
 trap 'rm -f "$tmpfile"' EXIT
 
+# --- Check: version bump required when plugin content changes ---
+# Find plugins with staged content changes but no plugin.json version bump.
+staged_all=$(git diff --cached --name-only --diff-filter=ACMRD) || true
+changed_plugins=$(echo "$staged_all" | grep -oP '^plugins/[^/]+' | sort -u || true)
+
+for plugin_dir in $changed_plugins; do
+  manifest="$plugin_dir/.claude-plugin/plugin.json"
+
+  # Skip if plugin.json itself is staged (version was likely bumped)
+  if echo "$staged_all" | grep -qxF "$manifest"; then
+    continue
+  fi
+
+  # Plugin content changed but plugin.json didn't
+  echo -e "${RED}BLOCKED${NC} [$plugin_dir] ${YELLOW}Version not bumped${NC}"
+  echo "  Plugin files changed but $manifest was not updated."
+  echo "  Bump the version in plugin.json before committing."
+  echo "$plugin_dir" >> "$tmpfile"
+done
+
 # Get staged plugin content (skip repo-level docs and hooks)
 staged_files=$(git diff --cached --name-only --diff-filter=ACM -- \
   'plugins/' ':!hooks/' ':!.gitignore' ':!LICENSE') || true
 
-if [[ -z "$staged_files" ]]; then
+if [[ -z "$staged_files" && ! -s "$tmpfile" ]]; then
   exit 0
+fi
+
+if [[ -z "$staged_files" ]]; then
+  # Only version-bump violations, skip pattern checks
+  staged_files=""
 fi
 
 for check in "${CHECKS[@]}"; do
