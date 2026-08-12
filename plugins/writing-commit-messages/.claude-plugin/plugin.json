@@ -1,6 +1,6 @@
 {
   "name": "writing-commit-messages",
   "version": "1.0.0",
-  "description": "Enforce clear commit messages: imperative mood, 50-char subject, business language, GitLab issue prefix",
+  "description": "Enforce clear commit messages: imperative mood, 50-char subject, business language, ticket prefix from branch",
   "hooks": "./hooks/hooks.json"
 }

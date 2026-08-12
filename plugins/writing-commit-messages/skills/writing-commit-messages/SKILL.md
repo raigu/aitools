@@ -40,14 +40,15 @@ Commit messages are for **PMs tracking work** and **future devs needing business
 
 ## Format
 ```
-#<issue> <Subject: imperative, capitalized, no period>
+<Subject: imperative, capitalized, no period>
 
 <Body: 72-char wrapped, explains WHAT and WHY>
 ```
 
-## GitLab Issue Prefix
-If branch has number prefix (e.g., `134-add-invoice`), start subject with `#134`
+## Ticket Prefix
+If the branch name starts with a ticket number, prefix the subject with it.
 - Branch: `134-add-invoice-re-sending` → Subject: `#134 Add invoice re-sending`
+- Branch: `PROJ-42-fix-login` → Subject: `PROJ-42 Fix login`
 - Branch: `feature/login` → No prefix needed
 
 ## Common Mistakes

@@ -23,4 +23,4 @@ claude /install writing-commit-messages
 
 | Plugin | Description |
 |--------|-------------|
-| `writing-commit-messages` | Enforce clear commit messages: imperative mood, 50-char subject, business language, GitLab issue prefix |
+| `writing-commit-messages` | Enforce clear commit messages: imperative mood, 50-char subject, business language, ticket prefix from branch |
