@@ -23,7 +23,7 @@ Commit messages are for **PMs tracking work** and **future devs needing business
 **Avoid in subjects and bodies:**
 - Variable/function names (`userDto`, `handleSubmit`)
 - Internal class/module names (`PaymentGatewayAdapter`, `OrderValidator`)
-- Framework specifics (`Redux selector`, `React hook`)
+- Framework-specific terms (state selectors, lifecycle hooks, ORM methods)
 
 **Instead describe:**
 - User/business impact when obvious

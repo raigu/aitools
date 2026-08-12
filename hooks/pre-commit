@@ -15,7 +15,12 @@ NC='\033[0m'
 # (one grep -E pattern per line). That file is local-only and never committed.
 CHECKS=(
   '/home/[a-z]+|~/\.(claude|config)/|Hardcoded home directory path'
-  'GitLab|glab |glab\b|GitLab-specific reference (use generic "issue tracker" or "ticket")'
+  '\bglab\b|\bgh\b issue|\bgh\b pr|Specific CLI tool reference'
+  '\b(GitLab|GitHub|Bitbucket|Jira|Linear|Asana)\b|Specific platform reference'
+  '\b(Django|Rails|Express|Next\.js|Flask|Spring|Laravel)\b|Specific framework reference'
+  '\b(pytest|jest|mocha|vitest|rspec|phpunit)\b|Specific test runner reference'
+  '\b(npm|yarn|pip|cargo|maven|gradle|bun|pnpm)\b run|Specific package manager command'
+  '\b(Docker|Kubernetes|docker.compose)\b|Specific infrastructure tool reference'
 )
 
 # Load local blocklist (client names, project identifiers, emails, etc.)
@@ -31,9 +36,9 @@ violations=0
 tmpfile=$(mktemp)
 trap 'rm -f "$tmpfile"' EXIT
 
-# Get staged file content (only added/modified text files, skip hooks/ itself)
+# Get staged plugin content (skip repo-level docs and hooks)
 staged_files=$(git diff --cached --name-only --diff-filter=ACM -- \
-  ':!hooks/' ':!.gitignore' ':!LICENSE') || true
+  'plugins/' ':!hooks/' ':!.gitignore' ':!LICENSE') || true
 
 if [[ -z "$staged_files" ]]; then
   exit 0
